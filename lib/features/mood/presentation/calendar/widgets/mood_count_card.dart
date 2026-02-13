@@ -6,10 +6,10 @@ import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
 import 'package:mood_map/core/widgets/success_dialog.dart';
 import 'package:mood_map/features/mood/data/models/chart_model.dart';
 import 'emojis_bar_widget.dart';
-import 'package:mood_map/features/provider/app_settings_provider.dart';
-import 'package:mood_map/features/mood/presentation/providers/mood_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/settings/cubit/app_settings_cubit.dart';
+import 'package:mood_map/features/mood/presentation/cubit/mood_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 // قطعة العد والإحصائية مع الأنيميشن
@@ -170,25 +170,25 @@ class _MoodCountCardState extends State<MoodCountCard> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<MoodProvider>(context);
-    final settings = Provider.of<AppSettingsProvider>(context, listen: false);
+    final moodCubit = context.watch<MoodCubit>();
+    final settingsState = context.watch<AppSettingsCubit>().state;
 
     // الألوان حسب الثيم
     final cardColor = Theme.of(context).cardColor;
     final textColor =
         Theme.of(context).textTheme.displayMedium?.color ?? Colors.black;
     final dividerColor =
-        settings.isDarkMode ? Colors.white12 : const Color(0xFFEAEAEA);
+        settingsState.isDarkMode ? Colors.white12 : const Color(0xFFEAEAEA);
 
     Map<MoodType, int> counts;
     if (widget.weekStart != null && widget.weekEnd != null) {
-      counts = provider.getMoodCountForWeek(
+      counts = moodCubit.getMoodCountForWeek(
         widget.weekStart!,
         widget.weekEnd!,
         filter: widget.filter,
       );
     } else {
-      counts = provider.getMoodCountForMonth(
+      counts = moodCubit.getMoodCountForMonth(
         widget.month!,
         widget.year!,
         filter: widget.filter,
@@ -218,7 +218,7 @@ class _MoodCountCardState extends State<MoodCountCard> {
           boxShadow: [
             BoxShadow(
               color:
-                  settings.isDarkMode
+                  settingsState.isDarkMode
                       ? Colors.black26
                       : Colors.black12.withAlpha(18),
               blurRadius: 12,
@@ -248,7 +248,7 @@ class _MoodCountCardState extends State<MoodCountCard> {
                       width: 24,
                       height: 24,
                       color:
-                          settings.isDarkMode
+                          settingsState.isDarkMode
                               ? MoodColors.awfulDarkActive
                               : MoodColors.awfulNormalActive,
                     ),

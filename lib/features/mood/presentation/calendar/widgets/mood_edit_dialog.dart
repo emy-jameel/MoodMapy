@@ -3,9 +3,9 @@ import 'package:mood_map/core/constants/mood_utils.dart';
 import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
 import 'package:mood_map/core/widgets/success_dialog.dart';
 import 'package:mood_map/features/mood/domain/entities/mood_entity.dart';
-import 'package:mood_map/features/mood/presentation/providers/mood_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/mood/presentation/cubit/mood_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
 // class MoodEditDialog extends StatefulWidget {
 //   final DateTime date;
@@ -258,10 +258,7 @@ class _MoodEditDialogState extends State<MoodEditDialog> {
                     ),
                     onPressed: () async {
                       if (selectedMood == null) return;
-                      final provider = Provider.of<MoodProvider>(
-                        context,
-                        listen: false,
-                      );
+                      final moodCubit = context.read<MoodCubit>();
                       final entry = MoodEntry(
                         mood: selectedMood!,
                         note: noteController.text.trim(),
@@ -271,12 +268,14 @@ class _MoodEditDialogState extends State<MoodEditDialog> {
                           widget.date.day,
                         ),
                       );
-                      await provider.addMood(entry);
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (_) => const SuccessDialogWidget(),
-                      );
+                      await moodCubit.addMood(entry);
+                      if (mounted) {
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (_) => const SuccessDialogWidget(),
+                        );
+                      }
                     },
                     child: Text(
                       AppLocalizations.of(context)!.save,

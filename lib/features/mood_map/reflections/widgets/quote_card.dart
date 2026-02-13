@@ -3,9 +3,9 @@ import 'package:mood_map/core/theme/text_styles.dart';
 import 'package:mood_map/core/constants/colors.dart';
 import 'package:mood_map/core/constants/icons.dart';
 import 'package:flutter/services.dart'; // للنسخ
-import 'package:mood_map/features/provider/Favorite_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/favorites/cubit/favorites_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart'; // للمشاركة
 
 // class QuoteCard extends StatelessWidget {
@@ -120,8 +120,8 @@ class QuoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final favProvider = Provider.of<FavoritesProvider>(context);
-    final isFavorite = favProvider.isFavorite(quote);
+    final favoritesCubit = context.read<FavoritesCubit>();
+    final isFavorite = favoritesCubit.isFavorite(quote);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -155,9 +155,9 @@ class QuoteCard extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (isFavorite) {
-                    favProvider.removeFavorite(quote);
+                    favoritesCubit.removeFavorite(quote);
                   } else {
-                    favProvider.addFavorite(quote);
+                    favoritesCubit.addFavorite(quote);
                   }
                 },
                 tooltip:

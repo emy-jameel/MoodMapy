@@ -7,7 +7,9 @@ import '../../features/mood/domain/repositories/mood_repository.dart';
 import '../../features/mood/domain/usecases/add_mood.dart';
 import '../../features/mood/domain/usecases/delete_mood.dart';
 import '../../features/mood/domain/usecases/get_moods.dart';
-import '../../features/mood/presentation/providers/mood_provider.dart';
+import '../../features/mood/presentation/cubit/mood_cubit.dart';
+import '../../features/settings/cubit/app_settings_cubit.dart';
+import '../../features/favorites/cubit/favorites_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -30,12 +32,15 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton(() => GetMoods(sl()));
   sl.registerLazySingleton(() => DeleteMood(sl()));
 
-  // Providers
+  // Cubits
   sl.registerFactory(
-    () => MoodProvider(
+    () => MoodCubit(
       addMoodUseCase: sl(),
       getMoodsUseCase: sl(),
       deleteMoodUseCase: sl(),
     ),
   );
+
+  sl.registerLazySingleton(() => AppSettingsCubit());
+  sl.registerLazySingleton(() => FavoritesCubit());
 }

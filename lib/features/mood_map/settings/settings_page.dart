@@ -3,9 +3,9 @@ import 'package:mood_map/core/constants/icons.dart';
 import 'package:mood_map/core/widgets/header_logo.dart';
 import 'package:mood_map/features/mood_map/settings/widgets/language_widget.dart';
 import 'package:mood_map/features/mood_map/settings/widgets/theme_widget.dart';
-import 'package:mood_map/features/provider/app_settings_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/settings/cubit/app_settings_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
 final switcherKey = 'settings_switcher';
 
@@ -76,18 +76,22 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = Provider.of<AppSettingsProvider>(context, listen: true);
-    final isDark = settings.isDarkMode;
+    final settingsCubit = context.watch<AppSettingsCubit>();
+    final settingsState = settingsCubit.state;
+    final isDark = settingsState.isDarkMode;
     final l10n = AppLocalizations.of(context)!;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
-    final dividerColor = settings.isDarkMode ? Colors.white12 : const Color(0xFFEAEAEA);
+    final dividerColor =
+        settingsState.isDarkMode ? Colors.white12 : const Color(0xFFEAEAEA);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF222C36) : const Color(0xFFF8FBFD),
+      backgroundColor:
+          isDark ? const Color(0xFF222C36) : const Color(0xFFF8FBFD),
       body: SafeArea(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 555),
-          transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
+          transitionBuilder:
+              (child, anim) => FadeTransition(opacity: anim, child: child),
           key: ValueKey(switcherKey),
           child: Column(
             key: ValueKey(switcherKey),
@@ -100,7 +104,10 @@ class SettingsPage extends StatelessWidget {
                   const HeaderLogo(showHeart: false),
                   const Spacer(),
                   IconButton(
-                    icon: Icon(isRtl ? Icons.arrow_back_ios : Icons.arrow_forward_ios, color: isDark ? Colors.white70 : Colors.black54),
+                    icon: Icon(
+                      isRtl ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -119,13 +126,25 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              Padding(padding: const EdgeInsets.all(16.0), child: LanguageWidget()),
-              Padding(padding: const EdgeInsets.all(16.0), child: ThemeWidget(settings: settings)),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: LanguageWidget(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ThemeWidget(settings: settingsState),
+              ),
               const Spacer(),
               Row(
                 children: [
                   const SizedBox(width: 8),
-                  Expanded(child: Divider(color: dividerColor, thickness: 1, endIndent: 12)),
+                  Expanded(
+                    child: Divider(
+                      color: dividerColor,
+                      thickness: 1,
+                      endIndent: 12,
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Row(
@@ -136,16 +155,36 @@ class SettingsPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white70 : const Color(0xFF8B4B47),
-                            shadows: [Shadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2))],
+                            color:
+                                isDark
+                                    ? Colors.white70
+                                    : const Color(0xFF8B4B47),
+                            shadows: [
+                              Shadow(
+                                color: Colors.black12,
+                                blurRadius: 5,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(width: 5),
-                        Image.asset(MoodIcons.madeBy, height: 32, width: 32, fit: BoxFit.contain),
+                        Image.asset(
+                          MoodIcons.madeBy,
+                          height: 32,
+                          width: 32,
+                          fit: BoxFit.contain,
+                        ),
                       ],
                     ),
                   ),
-                  Expanded(child: Divider(color: dividerColor, thickness: 1, indent: 12)),
+                  Expanded(
+                    child: Divider(
+                      color: dividerColor,
+                      thickness: 1,
+                      indent: 12,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                 ],
               ),

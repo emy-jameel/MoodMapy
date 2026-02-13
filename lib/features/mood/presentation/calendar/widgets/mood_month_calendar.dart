@@ -5,9 +5,9 @@ import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
 import 'package:mood_map/core/widgets/error_dialog.dart';
 import 'mood_detail_dialog.dart';
 import 'mood_edit_dialog.dart';
-import 'package:mood_map/features/mood/presentation/providers/mood_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/mood/presentation/cubit/mood_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
 // class MoodMonthView extends StatefulWidget {
 //   const MoodMonthView({super.key, required this.month, required this.year, required this.onMonthChanged, this.filter});
@@ -248,7 +248,7 @@ class _MoodMonthViewState extends State<MoodMonthView> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<MoodProvider>(context);
+    final moodCubit = context.watch<MoodCubit>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
@@ -276,7 +276,7 @@ class _MoodMonthViewState extends State<MoodMonthView> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? Color(0xFF232c3b) : Colors.white,
+        color: isDark ? const Color(0xFF232c3b) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -351,7 +351,7 @@ class _MoodMonthViewState extends State<MoodMonthView> {
               final calDay = calendarDays[index];
               if (calDay.isEmpty) return const SizedBox.shrink();
               final day = calDay.day!;
-              final moodType = provider.getMoodTypeForDay(
+              final moodType = moodCubit.getMoodTypeForDay(
                 day,
                 _displayedMonth,
                 _displayedYear,
@@ -373,7 +373,7 @@ class _MoodMonthViewState extends State<MoodMonthView> {
                   isFuture
                       ? (isDark ? Colors.grey[900] : MoodColors.awfulLight)
                       : (matchesFilter
-                          ? provider.getMoodColorForDay(
+                          ? moodCubit.getMoodColorForDay(
                             isDark,
                             day,
                             _displayedMonth,
@@ -398,7 +398,7 @@ class _MoodMonthViewState extends State<MoodMonthView> {
                           );
                         }
                         : () {
-                          final entry = provider.getMoodByDate(selectedDate);
+                          final entry = moodCubit.getMoodByDate(selectedDate);
                           if (entry != null) {
                             showDialog(
                               context: context,

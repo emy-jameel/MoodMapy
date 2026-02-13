@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mood_map/core/constants/colors.dart';
-import 'package:mood_map/features/provider/app_settings_provider.dart';
+import 'package:mood_map/features/settings/cubit/app_settings_cubit.dart';
+import 'package:mood_map/features/settings/cubit/app_settings_state.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
 
 // class ThemeWidget extends StatelessWidget {
@@ -38,7 +40,7 @@ import 'package:mood_map/l10n/app_localizations.dart';
 
 class ThemeWidget extends StatelessWidget {
   const ThemeWidget({super.key, required this.settings});
-  final AppSettingsProvider settings;
+  final AppSettingsState settings;
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +51,21 @@ class ThemeWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1A2233) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: isDark ? Colors.black.withAlpha(33) : Colors.black12, blurRadius: 8, offset: const Offset(0, 3))],
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black.withAlpha(33) : Colors.black12,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(Icons.nightlight_round, color: isDark ? Colors.blue[200] : MoodColors.primaryNormalActive, size: 28),
+          Icon(
+            Icons.nightlight_round,
+            color: isDark ? Colors.blue[200] : MoodColors.primaryNormalActive,
+            size: 28,
+          ),
           const SizedBox(width: 18),
           Text(
             AppLocalizations.of(context)!.theme,
@@ -69,8 +81,8 @@ class ThemeWidget extends StatelessWidget {
             value: settings.isDarkMode,
             activeColor: MoodColors.primaryNormalActive,
             inactiveThumbColor: MoodColors.awfulDarkActive,
-            onChanged: (_) => settings.toggleTheme(),
-            trackColor: MaterialStateProperty.all(MoodColors.awfulDark),
+            onChanged: (_) => context.read<AppSettingsCubit>().toggleTheme(),
+            trackColor: WidgetStateProperty.all(MoodColors.awfulDark),
           ),
         ],
       ),

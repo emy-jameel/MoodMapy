@@ -5,9 +5,9 @@ import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
 import 'package:mood_map/core/widgets/error_dialog.dart';
 import 'mood_detail_dialog.dart';
 import 'mood_edit_dialog.dart';
-import 'package:mood_map/features/mood/presentation/providers/mood_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/mood/presentation/cubit/mood_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
 // class MoodWeekView extends StatefulWidget {
 //   const MoodWeekView({super.key, required this.initialWeekStart, required this.onWeekChanged, this.filter});
@@ -180,7 +180,7 @@ class _MoodWeekViewState extends State<MoodWeekView> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<MoodProvider>(context);
+    final moodCubit = context.watch<MoodCubit>();
     final weekDays = List.generate(7, (i) => weekDayName(i, context));
     final now = DateTime.now();
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -242,7 +242,7 @@ class _MoodWeekViewState extends State<MoodWeekView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (i) {
               final date = _weekStart.add(Duration(days: i));
-              final moodType = provider.getMoodTypeForDay(
+              final moodType = moodCubit.getMoodTypeForDay(
                 date.day,
                 date.month,
                 date.year,
@@ -256,7 +256,7 @@ class _MoodWeekViewState extends State<MoodWeekView> {
               final color =
                   isDisabled
                       ? disabledColor
-                      : provider.getMoodColorForDay(
+                      : moodCubit.getMoodColorForDay(
                         isDark,
                         date.day,
                         date.month,
@@ -277,7 +277,7 @@ class _MoodWeekViewState extends State<MoodWeekView> {
                             }
                           }
                           : () {
-                            final entry = provider.getMoodByDate(date);
+                            final entry = moodCubit.getMoodByDate(date);
                             if (entry != null) {
                               showDialog(
                                 context: context,

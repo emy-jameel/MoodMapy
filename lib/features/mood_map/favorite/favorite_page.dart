@@ -5,10 +5,10 @@ import 'package:mood_map/core/constants/emojis.dart';
 import 'package:mood_map/core/constants/icons.dart';
 import 'package:mood_map/core/widgets/header_logo.dart';
 import 'package:mood_map/features/mood_map/settings/settings_page.dart';
-import 'package:mood_map/features/provider/Favorite_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/favorites/cubit/favorites_cubit.dart';
 import 'package:mood_map/features/mood_map/favorite/widgets/favorite_card.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
 // class FavoritesPage extends StatelessWidget {
 //   const FavoritesPage({super.key});
@@ -83,8 +83,9 @@ class FavoritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-    final isEmpty = favoritesProvider.favorites.isEmpty;
+    final favoritesCubit = context.watch<FavoritesCubit>();
+    final favoritesState = favoritesCubit.state;
+    final isEmpty = favoritesState.favorites.isEmpty;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -162,15 +163,13 @@ class FavoritesPage extends StatelessWidget {
                       )
                       : ListView.builder(
                         padding: const EdgeInsets.all(16),
-                        itemCount: favoritesProvider.favorites.length,
+                        itemCount: favoritesState.favorites.length,
                         itemBuilder: (context, idx) {
-                          final quote = favoritesProvider.favorites[idx];
+                          final quote = favoritesState.favorites[idx];
                           return FavoriteQuoteCard(
                             quote: quote,
                             onRemove:
-                                () => favoritesProvider.removeFavorite(
-                                  quote.text,
-                                ),
+                                () => favoritesCubit.removeFavorite(quote.text),
                             // يمكنك تعديل FavoriteQuoteCard ليدعم isDark إن أردت
                           );
                         },

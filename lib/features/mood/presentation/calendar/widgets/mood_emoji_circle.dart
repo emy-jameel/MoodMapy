@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
 
 // class MoodEmojiCircle extends StatelessWidget {
 //   final String? icon;

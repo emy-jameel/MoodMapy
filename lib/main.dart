@@ -3,11 +3,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mood_map/app/home_page.dart';
 import 'package:mood_map/core/theme/theme.dart';
 import 'package:mood_map/features/data/local/hive_initializer.dart';
-import 'package:mood_map/features/provider/Favorite_provider.dart';
-import 'package:mood_map/features/mood/presentation/providers/mood_provider.dart';
-import 'package:mood_map/features/provider/app_settings_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/features/mood/presentation/cubit/mood_cubit.dart';
+import 'package:mood_map/features/settings/cubit/app_settings_cubit.dart';
+import 'package:mood_map/features/settings/cubit/app_settings_state.dart';
+import 'package:mood_map/features/favorites/cubit/favorites_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 import 'package:mood_map/core/di/service_locator.dart';
 
 void main() async {
@@ -16,13 +17,11 @@ void main() async {
   await setupServiceLocator();
 
   runApp(
-    MultiProvider(
+    MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => AppSettingsProvider()..loadSettings(),
-        ),
-        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
-        ChangeNotifierProvider(create: (_) => sl<MoodProvider>()),
+        BlocProvider(create: (_) => sl<AppSettingsCubit>()..loadSettings()),
+        BlocProvider(create: (_) => sl<FavoritesCubit>()),
+        BlocProvider(create: (_) => sl<MoodCubit>()),
       ],
       child: const MoodMap(),
     ),
@@ -34,12 +33,12 @@ class MoodMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppSettingsProvider>(
-      builder: (context, settings, _) {
-        if (settings.isLoading) {
-          return Center(child: CircularProgressIndicator());
+    return BlocBuilder<AppSettingsCubit, AppSettingsState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
         }
-        final locale = Locale(settings.language);
+        final locale = Locale(state.language);
         return MaterialApp(
           localizationsDelegates: const [
             AppLocalizations.delegate,
@@ -49,9 +48,9 @@ class MoodMap extends StatelessWidget {
           ],
           locale: locale,
           supportedLocales: const [Locale('en'), Locale('ar')],
-          theme: MoodTheme.lightTheme(settings.language),
-          darkTheme: MoodTheme.darkTheme(settings.language),
-          themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          theme: MoodTheme.lightTheme(state.language),
+          darkTheme: MoodTheme.darkTheme(state.language),
+          themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
           localeResolutionCallback: (locale, supportedLocales) {
             for (var supportedLocale in supportedLocales) {

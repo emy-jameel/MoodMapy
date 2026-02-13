@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mood_map/core/constants/mood_utils.dart';
-import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
-import 'package:mood_map/core/widgets/success_dialog.dart';
 import 'package:mood_map/features/mood/domain/entities/mood_entity.dart';
-import 'package:mood_map/features/mood/presentation/providers/mood_provider.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 import 'mood_edit_dialog.dart';
 
 // class MoodDetailDialog extends StatelessWidget {
