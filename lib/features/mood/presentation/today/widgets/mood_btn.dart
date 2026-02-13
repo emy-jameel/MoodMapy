@@ -2,35 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mood_map/core/theme/text_styles.dart';
 import 'package:mood_map/core/constants/colors.dart';
 
-// class MoodButton extends StatelessWidget {
-//   final String text;
-//   final VoidCallback onPressed;
-//   final Color backgroundColor;
-//   final Color textColor;
-
-//   const MoodButton({
-//     super.key,
-//     required this.text,
-//     required this.onPressed,
-//     this.backgroundColor = const Color(0xFFa9def9),
-//     this.textColor = Colors.black,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ElevatedButton(
-//       style: ElevatedButton.styleFrom(
-//         backgroundColor: backgroundColor,
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-//         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-//       ),
-//       onPressed: onPressed,
-//       child: Text(text, style: MoodTextStyles.normal3.copyWith(fontWeight: FontWeight.w500, color: Colors.black)),
-//     );
-//   }
-// }
-
-class MoodButton extends StatelessWidget {
+class MoodButton extends StatefulWidget {
   final String text;
   final VoidCallback onPressed;
   final Color? backgroundColor;
@@ -45,28 +17,86 @@ class MoodButton extends StatelessWidget {
   });
 
   @override
+  State<MoodButton> createState() => _MoodButtonState();
+}
+
+class _MoodButtonState extends State<MoodButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    final bgColor =
-        backgroundColor ??
+    final btnColor =
+        widget.backgroundColor ??
         (isDark ? MoodColors.primaryDark : MoodColors.primaryNormal);
-    final fgColor = textColor ?? (isDark ? Colors.white : Colors.black);
 
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: bgColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        elevation: isDark ? 0 : 2,
-      ),
-      onPressed: onPressed,
-      child: Text(
-        text,
-        style: MoodTextStyles.normal3.copyWith(
-          fontWeight: FontWeight.w500,
-          color: fgColor,
-        ),
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      onTap: widget.onPressed,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    btnColor,
+                    btnColor.withAlpha(200), // Slightly lighter/transparent
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: btnColor.withAlpha(80), // ~0.3 opacity
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  widget.text,
+                  style: MoodTextStyles.button.copyWith(
+                    color: widget.textColor ?? Colors.white,
+                    fontSize: 18,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

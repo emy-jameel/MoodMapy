@@ -1,47 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mood_map/core/constants/colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mood_map/core/theme/text_styles.dart';
 import 'package:mood_map/features/settings/cubit/app_settings_cubit.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
-
-// class LanguageWidget extends StatelessWidget {
-//   const LanguageWidget({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final settings = Provider.of<AppSettingsProvider>(context, listen: true);
-
-//     return Container(
-//       padding: const EdgeInsets.all(18),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(16),
-//         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 3))],
-//       ),
-//       child: Row(
-//         children: [
-//           const Icon(Icons.language, color: Color(0xFF3B82F6), size: 28),
-//           const SizedBox(width: 18),
-//           Text(AppLocalizations.of(context)!.language, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
-//           const Spacer(),
-//           ToggleButtons(
-//             borderRadius: BorderRadius.circular(14),
-//             selectedColor: Colors.white,
-//             color: Colors.grey,
-//             fillColor: MoodColors.primaryNormalActive,
-//             constraints: const BoxConstraints(minWidth: 66, minHeight: 40),
-//             isSelected: [settings.language == 'ar', settings.language == 'en'],
-//             onPressed: (idx) async {
-//               final newLang = idx == 0 ? 'ar' : 'en';
-//               await settings.setLanguage(newLang);
-//             },
-//             children: const [Text('العربية', style: TextStyle(fontSize: 15)), Text('English', style: TextStyle(fontSize: 15))],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class LanguageWidget extends StatelessWidget {
   const LanguageWidget({super.key});
@@ -53,56 +15,132 @@ class LanguageWidget extends StatelessWidget {
     final isDark = settingsState.isDarkMode;
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1A2233) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? const Color(0xFF1E2630) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.black.withAlpha(10),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withAlpha(38) : Colors.black12,
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: isDark ? Colors.black26 : Colors.black.withAlpha(10),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Icon(
-            Icons.language,
-            color: isDark ? Colors.blue[200] : const Color(0xFF3B82F6),
-            size: 28,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color:
+                      isDark
+                          ? Colors.blue.withAlpha(30)
+                          : Colors.blue.withAlpha(20),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.language,
+                  color: isDark ? Colors.blue[200] : const Color(0xFF3B82F6),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                AppLocalizations.of(context)!.language,
+                style: MoodTextStyles.heading3.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 18),
-          Text(
-            AppLocalizations.of(context)!.language,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-              color: isDark ? Colors.white : Colors.black,
+          const SizedBox(height: 20),
+          Container(
+            decoration: BoxDecoration(
+              color: isDark ? Colors.black26 : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.all(4),
+            child: Row(
+              children: [
+                _LanguageOption(
+                  label: 'العربية',
+                  isSelected: settingsState.language == 'ar',
+                  onTap: () => settingsCubit.setLanguage('ar'),
+                  isDark: isDark,
+                ),
+                _LanguageOption(
+                  label: 'English',
+                  isSelected: settingsState.language == 'en',
+                  onTap: () => settingsCubit.setLanguage('en'),
+                  isDark: isDark,
+                ),
+              ],
             ),
           ),
-          const Spacer(),
-          ToggleButtons(
-            borderRadius: BorderRadius.circular(14),
-            selectedColor: isDark ? Colors.black : Colors.white,
-            color: isDark ? Colors.white70 : Colors.grey,
-            fillColor:
-                isDark ? Colors.blue[200]! : MoodColors.primaryNormalActive,
-            constraints: const BoxConstraints(minWidth: 66, minHeight: 40),
-            isSelected: [
-              settingsState.language == 'ar',
-              settingsState.language == 'en',
-            ],
-            onPressed: (idx) async {
-              final newLang = idx == 0 ? 'ar' : 'en';
-              await settingsCubit.setLanguage(newLang);
-            },
-            children: const [
-              Text('العربية', style: TextStyle(fontSize: 15)),
-              Text('English', style: TextStyle(fontSize: 15)),
-            ],
-          ),
         ],
+      ),
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const _LanguageOption({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color:
+                isSelected
+                    ? (isDark ? MoodColors.primaryNormal : Colors.white)
+                    : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow:
+                isSelected
+                    ? [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                    : [],
+          ),
+          child: Text(
+            label,
+            style: MoodTextStyles.body1.copyWith(
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color:
+                  isSelected
+                      ? (isDark ? Colors.white : Colors.black87)
+                      : (isDark ? Colors.white60 : Colors.black54),
+            ),
+          ),
+        ),
       ),
     );
   }

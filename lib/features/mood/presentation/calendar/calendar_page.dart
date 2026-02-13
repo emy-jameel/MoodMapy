@@ -20,9 +20,7 @@ class _CalendarPageState extends State<CalendarPage> {
   int selectedMonth = DateTime.now().month;
   int selectedYear = DateTime.now().year;
   bool isWeekView = false;
-  // متغير الفلتر
   MoodType? _selectedFilter;
-  // المتغيرات الجديدة للأسبوع الحالي
   DateTime weekStart = DateTime.now().subtract(
     Duration(days: DateTime.now().weekday % 7),
   );
@@ -59,59 +57,122 @@ class _CalendarPageState extends State<CalendarPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.moodCalendar,
-                    style: MoodTextStyles.bold4.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 24,
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.translate(
+                          offset: Offset(0, 20 * (1 - value)),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.moodCalendar,
+                      style: MoodTextStyles.bold4.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 24,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
+
                   // Filter bar
-                  CalendarFilterBar(
-                    isWeekView: isWeekView,
-                    onWeekTap: () => setState(() => isWeekView = true),
-                    onMonthTap: () => setState(() => isWeekView = false),
-                    selectedFilter: _selectedFilter,
-                    onFilterTap: () async {
-                      final result = await showDialog<MoodType>(
-                        context: context,
-                        builder:
-                            (_) => MoodCircleFilterDialog(
-                              selected: _selectedFilter,
-                            ),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.translate(
+                          offset: Offset(0, 20 * (1 - value)),
+                          child: child,
+                        ),
                       );
-                      setState(() {
-                        _selectedFilter = result;
-                      });
                     },
+                    child: CalendarFilterBar(
+                      isWeekView: isWeekView,
+                      onWeekTap: () => setState(() => isWeekView = true),
+                      onMonthTap: () => setState(() => isWeekView = false),
+                      selectedFilter: _selectedFilter,
+                      onFilterTap: () async {
+                        final result = await showDialog<MoodType>(
+                          context: context,
+                          builder:
+                              (_) => MoodCircleFilterDialog(
+                                selected: _selectedFilter,
+                              ),
+                        );
+                        setState(() {
+                          _selectedFilter = result;
+                        });
+                      },
+                    ),
                   ),
 
                   const SizedBox(height: 24),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child:
-                        isWeekView
-                            ? MoodWeekView(
-                              initialWeekStart: weekStart,
-                              onWeekChanged: _onWeekChanged,
-                              filter: _selectedFilter,
-                            )
-                            : MoodMonthView(
-                              month: selectedMonth,
-                              year: selectedYear,
-                              onMonthChanged: _onMonthChanged,
-                              filter: _selectedFilter,
-                            ),
+
+                  // Calendar View
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.translate(
+                          offset: Offset(0, 30 * (1 - value)),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child:
+                          isWeekView
+                              ? MoodWeekView(
+                                key: const ValueKey('week_view'),
+                                initialWeekStart: weekStart,
+                                onWeekChanged: _onWeekChanged,
+                                filter: _selectedFilter,
+                              )
+                              : MoodMonthView(
+                                key: const ValueKey('month_view'),
+                                month: selectedMonth,
+                                year: selectedYear,
+                                onMonthChanged: _onMonthChanged,
+                                filter: _selectedFilter,
+                              ),
+                    ),
                   ),
 
                   const SizedBox(height: 10),
-                  MoodCountCard(
-                    month: !isWeekView ? selectedMonth : null,
-                    year: !isWeekView ? selectedYear : null,
-                    weekStart: isWeekView ? weekStart : null,
-                    weekEnd: isWeekView ? weekEnd : null,
-                    filter: _selectedFilter,
+
+                  // Count Card
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.translate(
+                          offset: Offset(0, 40 * (1 - value)),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: MoodCountCard(
+                      month: !isWeekView ? selectedMonth : null,
+                      year: !isWeekView ? selectedYear : null,
+                      weekStart: isWeekView ? weekStart : null,
+                      weekEnd: isWeekView ? weekEnd : null,
+                      filter: _selectedFilter,
+                    ),
                   ),
                   const SizedBox(height: 24),
                 ],

@@ -29,61 +29,112 @@ class MoodEmojis extends StatelessWidget {
     }
   }
 
+  String _moodLabel(BuildContext context, MoodType mood) {
+    // You might want to move these to l10n later if they aren't there
+    switch (mood) {
+      case MoodType.happy:
+        return "Happy";
+      case MoodType.good:
+        return "Good";
+      case MoodType.okay:
+        return "Okay";
+      case MoodType.bad:
+        return "Bad";
+      case MoodType.awfull:
+        return "Awful";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children:
-          moodList.map((mood) {
-            final isSelected = mood == selected;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:
+            moodList.map((mood) {
+              final isSelected = mood == selected;
 
-            Widget emoji = AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              width: isSelected ? 70 : 60,
-              height: isSelected ? 70 : 60,
-              decoration: BoxDecoration(
-                color:
-                    isSelected
-                        ? _moodColor(mood).withAlpha(46)
-                        : Colors.transparent,
-                border: Border.all(
-                  color: isSelected ? _moodColor(mood) : Colors.transparent,
-                  width: isSelected ? 3 : 1.5,
-                ),
-                borderRadius: BorderRadius.circular(45),
-                boxShadow: [
-                  BoxShadow(
+              return GestureDetector(
+                onTap: () {
+                  onSelect(mood);
+                  // Simple haptic feedback if available (requires service or just ease)
+                  // For now, reliance on logic is enough, or import services
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutBack,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: EdgeInsets.all(isSelected ? 10 : 8),
+                  decoration: BoxDecoration(
                     color:
                         isSelected
-                            ? _moodColor(mood).withAlpha(51)
+                            ? _moodColor(mood).withAlpha(50)
                             : Colors.transparent,
-                    blurRadius: isSelected ? 15 : 0,
-                    spreadRadius: isSelected ? 1 : 0,
-                    offset: isSelected ? Offset(0, 8) : Offset(0, 0),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected ? _moodColor(mood) : Colors.transparent,
+                      width: 2,
+                    ),
                   ),
-                ],
-              ),
-              clipBehavior: Clip.none,
-              child: Image.asset(
-                mood.assetPath,
-                height: 45,
-                width: 45,
-                fit: BoxFit.contain,
-              ),
-            );
+                  child: Column(
+                    children: [
+                      AnimatedScale(
+                        scale: isSelected ? 1.2 : 1.0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.elasticOut,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow:
+                                isSelected
+                                    ? [
+                                      BoxShadow(
+                                        color: _moodColor(mood).withAlpha(100),
+                                        blurRadius: 15,
+                                        spreadRadius: 2,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ]
+                                    : [],
+                          ),
+                          child: Image.asset(
+                            mood.assetPath,
+                            height: 50,
+                            width: 50,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
 
-            // لو الإيموجي هو المختار فعّل الحركة
-            if (isSelected) {
-              emoji = AnimatedScale(
-                scale: 1.15,
-                duration: const Duration(milliseconds: 320),
-                curve: Curves.elasticOut,
-                child: emoji,
+                      // Animated Label
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 200),
+                        child: SizedBox(
+                          height: isSelected ? 24 : 0,
+                          child:
+                              isSelected
+                                  ? Padding(
+                                    padding: const EdgeInsets.only(top: 4.0),
+                                    child: Text(
+                                      // Ideally translate this
+                                      mood.name.toUpperCase(),
+                                      style: TextStyle(
+                                        color: _moodColor(mood),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  )
+                                  : const SizedBox(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
-            }
-
-            return GestureDetector(onTap: () => onSelect(mood), child: emoji);
-          }).toList(),
+            }).toList(),
+      ),
     );
   }
 }

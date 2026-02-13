@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mood_map/core/theme/text_styles.dart';
-import 'package:mood_map/core/constants/colors.dart';
+
 import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
 import 'icon_filter_widget.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
@@ -95,96 +95,110 @@ class CalendarFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final lang = Localizations.localeOf(context).languageCode;
-    final cardColor = Theme.of(context).cardColor; // يدعم الثيمين
+
+    // Use card color from theme, or fallback
+    final backgroundColor =
+        theme.cardTheme.color ??
+        (isDark ? const Color(0xFF2B3642) : Colors.white);
+    final activeColor = theme.primaryColor;
+    final inactiveColor = isDark ? Colors.white70 : Colors.black54;
 
     return Container(
-      padding: const EdgeInsets.only(left: 16),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(12),
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black45 : Colors.black12.withAlpha(15),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: isDark ? Colors.black45 : Colors.black12,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         children: [
-          // زر Week
+          // Week Button
           Expanded(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor:
-                    isWeekView
-                        ? (isDark
-                            ? MoodColors.primaryDarkActive
-                            : MoodColors.primaryNormal)
-                        : cardColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: onWeekTap,
-              child: Text(
-                AppLocalizations.of(context)!.week,
-                style: MoodTextStyles.normal1.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
+            child: GestureDetector(
+              onTap: onWeekTap,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
                   color:
                       isWeekView
-                          ? (isDark
-                              ? MoodColors.primaryNormal
-                              : MoodColors.primaryDarker)
-                          : (isDark
-                              ? MoodColors.awfulDark
-                              : MoodColors.awfulNormalHover),
-                  fontFamily: lang == 'ar' ? 'Zain' : 'Poppins',
+                          ? activeColor.withAlpha(isDark ? 50 : 30)
+                          : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isWeekView ? activeColor : Colors.transparent,
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.week,
+                  textAlign: TextAlign.center,
+                  style: MoodTextStyles.button.copyWith(
+                    color: isWeekView ? activeColor : inactiveColor,
+                    fontFamily: lang == 'ar' ? 'Zain' : 'Poppins',
+                  ),
                 ),
               ),
             ),
           ),
-          // زر Month
+
+          const SizedBox(width: 8),
+
+          // Month Button
           Expanded(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor:
-                    !isWeekView
-                        ? (isDark
-                            ? MoodColors.primaryDarkActive
-                            : MoodColors.primaryNormal)
-                        : cardColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: onMonthTap,
-              child: Text(
-                AppLocalizations.of(context)!.month,
-                style: MoodTextStyles.normal1.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
+            child: GestureDetector(
+              onTap: onMonthTap,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
                   color:
                       !isWeekView
-                          ? (isDark
-                              ? MoodColors.primaryNormal
-                              : MoodColors.primaryDarker)
-                          : (isDark
-                              ? MoodColors.awfulDark
-                              : MoodColors.awfulNormalHover),
-                  fontFamily: lang == 'ar' ? 'Zain' : 'Poppins',
+                          ? activeColor.withAlpha(isDark ? 50 : 30)
+                          : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: !isWeekView ? activeColor : Colors.transparent,
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.month,
+                  textAlign: TextAlign.center,
+                  style: MoodTextStyles.button.copyWith(
+                    color: !isWeekView ? activeColor : inactiveColor,
+                    fontFamily: lang == 'ar' ? 'Zain' : 'Poppins',
+                  ),
                 ),
               ),
             ),
           ),
-          // أيقونة الفلتر مع البادج
+
+          // Filter Icon with Badge
+          const SizedBox(width: 8),
+          Container(
+            height: 40,
+            width: 1,
+            color: isDark ? Colors.white12 : Colors.black12,
+          ),
+          const SizedBox(width: 8),
+
           IconFilterWidget(
             onFilterTap: onFilterTap,
             selectedFilter: selectedFilter,
           ),
+          const SizedBox(width: 8),
         ],
       ),
     );

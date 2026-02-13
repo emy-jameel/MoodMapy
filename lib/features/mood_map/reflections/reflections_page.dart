@@ -70,64 +70,6 @@ class _ReflectionsPageState extends State<ReflectionsPage> {
   );
   void _next() => setState(() => current = (current + 1) % quoteKeys.length);
 
-  //   @override
-  //   Widget build(BuildContext context) {
-  //     final Size screenSize = MediaQuery.of(context).size;
-  //     final l10n = AppLocalizations.of(context)!;
-  //     final quotes = getQuotes(l10n);
-  //     final isDark = Theme.of(context).brightness == Brightness.dark;
-  //     return Scaffold(
-  //       backgroundColor: isDark ? const Color(0xFF222C36) : Colors.white,
-  //       body: Stack(
-  //         children: [
-  //           SingleChildScrollView(
-  //             padding: const EdgeInsets.only(bottom: 200),
-  //             child: Column(
-  //               children: [
-  //                 const HeaderLogo(),
-  //                 const SizedBox(height: 16),
-  //                 Text(l10n.reflections, style: MoodTextStyles.bold3.copyWith(color: Colors.black, fontSize: 28)),
-  //                 const SizedBox(height: 4),
-  //                 Text(l10n.spaceForYourMood, style: MoodTextStyles.normal3.copyWith(color: MoodColors.tPrimaryNormalActive)),
-  //                 const SizedBox(height: 42),
-  //                 AnimatedSwitcher(
-  //                   duration: const Duration(milliseconds: 350),
-  //                   transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
-  //                   child: QuoteCard(key: ValueKey(current), quote: quotes[current]),
-  //                 ),
-  //                 const SizedBox(height: 150),
-  //               ],
-  //             ),
-  //           ),
-  //           // Bottom navigation
-  //           Positioned(
-  //             bottom: 0,
-  //             left: 0,
-  //             right: 0,
-  //             child: Stack(
-  //               alignment: Alignment.topCenter,
-  //               children: [
-  //                 ClipPath(
-  //                   clipper: HeaderClipperFavorite(),
-  //                   child: Container(height: screenSize.height * 0.3, decoration: BoxDecoration(color: MoodColors.tPrimaryLight)),
-  //                 ),
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     ArrowButton(icon: MoodIcons.arrowRight, onTap: _prev, flipForRtl: true),
-  //                     const SizedBox(width: 60),
-  //                     ArrowButton(icon: MoodIcons.arrowLeft, onTap: _next, flipForRtl: true),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -139,35 +81,85 @@ class _ReflectionsPageState extends State<ReflectionsPage> {
       backgroundColor: isDark ? const Color(0xFF222C36) : Colors.white,
       body: Stack(
         children: [
+          // Background Gradient Element
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 400,
+              height: 400,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors:
+                      isDark
+                          ? [
+                            MoodColors.primaryDark.withAlpha(50),
+                            Colors.transparent,
+                          ]
+                          : [
+                            MoodColors.primaryLight.withAlpha(100),
+                            Colors.transparent,
+                          ],
+                ),
+              ),
+            ),
+          ),
+
           SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 200),
             child: Column(
               children: [
                 const HeaderLogo(),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.reflections,
-                  style: MoodTextStyles.bold3.copyWith(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 28,
+                const SizedBox(height: 24),
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 800),
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, 20 * (1 - value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        l10n.reflections,
+                        style: MoodTextStyles.heading2.copyWith(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 28,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.spaceForYourMood,
+                        style: MoodTextStyles.body1.copyWith(
+                          color:
+                              isDark
+                                  ? MoodColors.tPrimaryLightActive
+                                  : MoodColors.tPrimaryNormalActive,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.spaceForYourMood,
-                  style: MoodTextStyles.normal3.copyWith(
-                    color:
-                        isDark
-                            ? MoodColors.tPrimaryLightActive
-                            : MoodColors.tPrimaryNormalActive,
-                  ),
-                ),
-                const SizedBox(height: 42),
+                const SizedBox(height: 60),
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 350),
-                  transitionBuilder:
-                      (child, anim) =>
-                          FadeTransition(opacity: anim, child: child),
+                  duration: const Duration(milliseconds: 500),
+                  switchInCurve: Curves.easeOutBack,
+                  switchOutCurve: Curves.easeInBack,
+                  transitionBuilder: (child, anim) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.0, 0.1),
+                        end: Offset.zero,
+                      ).animate(anim),
+                      child: FadeTransition(opacity: anim, child: child),
+                    );
+                  },
                   child: QuoteCard(
                     key: ValueKey(current),
                     quote: quotes[current],
@@ -189,32 +181,46 @@ class _ReflectionsPageState extends State<ReflectionsPage> {
                 ClipPath(
                   clipper: HeaderClipperFavorite(),
                   child: Container(
-                    height: screenSize.height * 0.3,
+                    height: screenSize.height * 0.28,
                     decoration: BoxDecoration(
-                      color:
-                          isDark
-                              ? MoodColors.tPrimaryDark
-                              : MoodColors.tPrimaryLight,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors:
+                            isDark
+                                ? [
+                                  MoodColors.tPrimaryDark,
+                                  const Color(0xFF1A222C),
+                                ]
+                                : [MoodColors.tPrimaryLight, Colors.white],
+                      ),
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ArrowButton(
-                      icon: MoodIcons.arrowRight,
-                      onTap: _prev,
-                      flipForRtl: true,
-                      isDark: isDark,
-                    ),
-                    const SizedBox(width: 60),
-                    ArrowButton(
-                      icon: MoodIcons.arrowLeft,
-                      onTap: _next,
-                      flipForRtl: true,
-                      isDark: isDark,
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 40),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ArrowButton(
+                        icon: MoodIcons.arrowRight,
+                        onTap: () {
+                          _prev();
+                        },
+                        flipForRtl: true,
+                        isDark: isDark,
+                      ),
+                      const SizedBox(width: 80),
+                      ArrowButton(
+                        icon: MoodIcons.arrowLeft,
+                        onTap: () {
+                          _next();
+                        },
+                        flipForRtl: true,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

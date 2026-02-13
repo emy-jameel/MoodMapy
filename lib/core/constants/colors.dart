@@ -96,4 +96,12 @@ class MoodColors {
   static const tPrimaryDarkHover = Color(0xFF232323);
   static const tPrimaryDarkActive = Color(0xFF131313);
   static const tPrimaryDarker = Color(0xFF070707);
+
+  // --- UI Colors
+  static const scaffoldLight = Colors.white;
+  static const scaffoldDark = Color(0xFF222C36);
+  static const surfaceLight = Colors.white;
+  static const surfaceDark = Color(0xFF2B3642);
+  static const outlineLight = Color(0xFFEAEAEA);
+  static const outlineDark = Color(0xFF3E4852);
 }

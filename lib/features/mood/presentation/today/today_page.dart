@@ -52,77 +52,136 @@ class _TodayPageState extends State<TodayPage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.howAreYouFeeling,
-                            style: MoodTextStyles.bold4.copyWith(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 24,
-                              height: 1.46,
-                              color: isDark ? Colors.white : Colors.black,
-                              fontFamily:
-                                  Localizations.localeOf(
-                                            context,
-                                          ).languageCode ==
-                                          'ar'
-                                      ? 'Zain'
-                                      : 'Poppins',
+                          // Animated Greeting
+                          TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0.0, end: 1.0),
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeOut,
+                            builder: (context, value, child) {
+                              return Opacity(
+                                opacity: value,
+                                child: Transform.translate(
+                                  offset: Offset(0, 20 * (1 - value)),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.howAreYouFeeling,
+                              style: MoodTextStyles.heading2.copyWith(
+                                color: isDark ? Colors.white : Colors.black87,
+                                fontFamily:
+                                    Localizations.localeOf(
+                                              context,
+                                            ).languageCode ==
+                                            'ar'
+                                        ? 'Zain'
+                                        : 'Poppins',
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          MoodEmojis(
-                            moodList: moodList,
-                            selected: moodState.selectedMood,
-                            onSelect:
-                                (mood) =>
-                                    context.read<MoodCubit>().setMood(mood),
                           ),
                           const SizedBox(height: 24),
-                          MoodTextField(controller: _noteController),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: double.infinity,
-                            child: MoodButton(
-                              text: AppLocalizations.of(context)!.saveMood,
-                              onPressed: () async {
-                                final result = await context
-                                    .read<MoodCubit>()
-                                    .saveMood(_noteController.text);
-                                if (result == MoodSaveResult.noMood) {
-                                  if (mounted) {
-                                    errorDialog(
-                                      context,
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.chooseModeFirst,
-                                    );
-                                  }
-                                } else if (result == MoodSaveResult.emptyNote) {
-                                  if (mounted) {
-                                    errorDialog(
-                                      context,
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.emptyTextFieldError,
-                                    );
-                                  }
-                                } else if (result == MoodSaveResult.success) {
-                                  if (mounted) {
-                                    _noteController.clear();
-                                    savedDialog(context);
-                                  }
-                                } else if (result == MoodSaveResult.error) {
-                                  if (mounted) {
-                                    errorDialog(
-                                      context,
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.unexpectedError,
-                                    );
-                                  }
-                                }
-                              },
+
+                          // Animated Emojis
+                          TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0.0, end: 1.0),
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeOut,
+                            builder: (context, value, child) {
+                              return Opacity(
+                                opacity: value,
+                                child: Transform.translate(
+                                  offset: Offset(0, 20 * (1 - value)),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: MoodEmojis(
+                              moodList: moodList,
+                              selected: moodState.selectedMood,
+                              onSelect:
+                                  (mood) =>
+                                      context.read<MoodCubit>().setMood(mood),
                             ),
                           ),
+                          const SizedBox(height: 32),
+
+                          // Animated TextField
+                          TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0.0, end: 1.0),
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeOut,
+                            builder: (context, value, child) {
+                              return Opacity(
+                                opacity: value,
+                                child: Transform.translate(
+                                  offset: Offset(0, 30 * (1 - value)),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: MoodTextField(controller: _noteController),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Animated Button
+                          TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0.0, end: 1.0),
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeOut,
+                            builder: (context, value, child) {
+                              return Opacity(
+                                opacity: value,
+                                child: Transform.translate(
+                                  offset: Offset(0, 40 * (1 - value)),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: MoodButton(
+                                text: AppLocalizations.of(context)!.saveMood,
+                                onPressed: () async {
+                                  final result = await context
+                                      .read<MoodCubit>()
+                                      .saveMood(_noteController.text);
+                                  if (result == MoodSaveResult.noMood) {
+                                    if (mounted)
+                                      errorDialog(
+                                        context,
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.chooseModeFirst,
+                                      );
+                                  } else if (result ==
+                                      MoodSaveResult.emptyNote) {
+                                    if (mounted)
+                                      errorDialog(
+                                        context,
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.emptyTextFieldError,
+                                      );
+                                  } else if (result == MoodSaveResult.success) {
+                                    if (mounted) {
+                                      _noteController.clear();
+                                      savedDialog(context);
+                                    }
+                                  } else if (result == MoodSaveResult.error) {
+                                    if (mounted)
+                                      errorDialog(
+                                        context,
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.unexpectedError,
+                                      );
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40), // Bottom padding
                         ],
                       );
                     },
