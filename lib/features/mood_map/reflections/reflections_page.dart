@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mood_map/core/constants/colors.dart';
 import 'package:mood_map/core/constants/icons.dart';
-import 'package:mood_map/app/theme/text_styles.dart';
+import 'package:mood_map/core/theme/text_styles.dart';
 import 'package:mood_map/core/widgets/header_logo.dart';
 import 'package:mood_map/features/mood_map/reflections/widgets/arrow_btn.dart';
 import 'package:mood_map/features/mood_map/reflections/widgets/clip_path.dart';
@@ -65,7 +65,9 @@ class _ReflectionsPageState extends State<ReflectionsPage> {
     ];
   }
 
-  void _prev() => setState(() => current = (current - 1 + quoteKeys.length) % quoteKeys.length);
+  void _prev() => setState(
+    () => current = (current - 1 + quoteKeys.length) % quoteKeys.length,
+  );
   void _next() => setState(() => current = (current + 1) % quoteKeys.length);
 
   //   @override
@@ -143,17 +145,34 @@ class _ReflectionsPageState extends State<ReflectionsPage> {
               children: [
                 const HeaderLogo(),
                 const SizedBox(height: 16),
-                Text(l10n.reflections, style: MoodTextStyles.bold3.copyWith(color: isDark ? Colors.white : Colors.black, fontSize: 28)),
+                Text(
+                  l10n.reflections,
+                  style: MoodTextStyles.bold3.copyWith(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 28,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   l10n.spaceForYourMood,
-                  style: MoodTextStyles.normal3.copyWith(color: isDark ? MoodColors.tPrimaryLightActive : MoodColors.tPrimaryNormalActive),
+                  style: MoodTextStyles.normal3.copyWith(
+                    color:
+                        isDark
+                            ? MoodColors.tPrimaryLightActive
+                            : MoodColors.tPrimaryNormalActive,
+                  ),
                 ),
                 const SizedBox(height: 42),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 350),
-                  transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
-                  child: QuoteCard(key: ValueKey(current), quote: quotes[current], isDark: isDark),
+                  transitionBuilder:
+                      (child, anim) =>
+                          FadeTransition(opacity: anim, child: child),
+                  child: QuoteCard(
+                    key: ValueKey(current),
+                    quote: quotes[current],
+                    isDark: isDark,
+                  ),
                 ),
                 const SizedBox(height: 150),
               ],
@@ -171,15 +190,30 @@ class _ReflectionsPageState extends State<ReflectionsPage> {
                   clipper: HeaderClipperFavorite(),
                   child: Container(
                     height: screenSize.height * 0.3,
-                    decoration: BoxDecoration(color: isDark ? MoodColors.tPrimaryDark : MoodColors.tPrimaryLight),
+                    decoration: BoxDecoration(
+                      color:
+                          isDark
+                              ? MoodColors.tPrimaryDark
+                              : MoodColors.tPrimaryLight,
+                    ),
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ArrowButton(icon: MoodIcons.arrowRight, onTap: _prev, flipForRtl: true, isDark: isDark),
+                    ArrowButton(
+                      icon: MoodIcons.arrowRight,
+                      onTap: _prev,
+                      flipForRtl: true,
+                      isDark: isDark,
+                    ),
                     const SizedBox(width: 60),
-                    ArrowButton(icon: MoodIcons.arrowLeft, onTap: _next, flipForRtl: true, isDark: isDark),
+                    ArrowButton(
+                      icon: MoodIcons.arrowLeft,
+                      onTap: _next,
+                      flipForRtl: true,
+                      isDark: isDark,
+                    ),
                   ],
                 ),
               ],

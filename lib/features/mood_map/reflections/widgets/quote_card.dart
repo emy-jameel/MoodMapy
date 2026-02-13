@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mood_map/app/theme/text_styles.dart';
+import 'package:mood_map/core/theme/text_styles.dart';
 import 'package:mood_map/core/constants/colors.dart';
 import 'package:mood_map/core/constants/icons.dart';
 import 'package:flutter/services.dart'; // للنسخ
@@ -104,7 +104,10 @@ class QuoteCard extends StatelessWidget {
     Clipboard.setData(ClipboardData(text: quote));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تم نسخ الاقتباس!', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+        content: Text(
+          'تم نسخ الاقتباس!',
+          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+        ),
         backgroundColor: isDark ? Colors.grey[900] : Colors.white,
         behavior: SnackBarBehavior.floating,
       ),
@@ -127,7 +130,13 @@ class QuoteCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF23272F) : Colors.white,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [BoxShadow(color: isDark ? Colors.black26 : Colors.black12, blurRadius: 12, offset: const Offset(0, 4))],
+          boxShadow: [
+            BoxShadow(
+              color: isDark ? Colors.black26 : Colors.black12,
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -136,7 +145,12 @@ class QuoteCard extends StatelessWidget {
               child: IconButton(
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border_sharp,
-                  color: isFavorite ? Colors.red : (isDark ? MoodColors.primaryDark : MoodColors.tPrimaryDark),
+                  color:
+                      isFavorite
+                          ? Colors.red
+                          : (isDark
+                              ? MoodColors.primaryDark
+                              : MoodColors.tPrimaryDark),
                   size: 32,
                 ),
                 onPressed: () {
@@ -146,7 +160,10 @@ class QuoteCard extends StatelessWidget {
                     favProvider.addFavorite(quote);
                   }
                 },
-                tooltip: isFavorite ? AppLocalizations.of(context)!.removeFromFavorites : AppLocalizations.of(context)!.toggleFavorite,
+                tooltip:
+                    isFavorite
+                        ? AppLocalizations.of(context)!.removeFromFavorites
+                        : AppLocalizations.of(context)!.toggleFavorite,
               ),
             ),
             const SizedBox(height: 24),
@@ -171,7 +188,10 @@ class QuoteCard extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
                       MoodIcons.copy,
-                      color: isDark ? MoodColors.primaryDarkActive : MoodColors.primaryNormalActive,
+                      color:
+                          isDark
+                              ? MoodColors.primaryDarkActive
+                              : MoodColors.primaryNormalActive,
                       width: 25,
                       height: 25,
                     ),
@@ -186,7 +206,10 @@ class QuoteCard extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
                       MoodIcons.download, // أو share
-                      color: isDark ? MoodColors.primaryDarkActive : MoodColors.primaryNormalActive,
+                      color:
+                          isDark
+                              ? MoodColors.primaryDarkActive
+                              : MoodColors.primaryNormalActive,
                       width: 25,
                       height: 25,
                     ),

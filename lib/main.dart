@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hive_flutter/hive_flutter.dart' show Hive;
 import 'package:mood_map/app/home_page.dart';
-import 'package:mood_map/app/theme/theme.dart';
+import 'package:mood_map/core/theme/theme.dart';
 import 'package:mood_map/features/data/local/hive_initializer.dart';
-import 'package:mood_map/features/data/models/mood_entry.dart';
 import 'package:mood_map/features/provider/Favorite_provider.dart';
-import 'package:mood_map/features/provider/mood_provider.dart';
+import 'package:mood_map/features/mood/presentation/providers/mood_provider.dart';
 import 'package:mood_map/features/provider/app_settings_provider.dart';
 import 'package:mood_map/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:mood_map/core/di/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveInitializer.init();
-  final moodBox = Hive.box<MoodEntry>('mood_box');
+  await setupServiceLocator();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppSettingsProvider()..loadSettings()),
-
+        ChangeNotifierProvider(
+          create: (_) => AppSettingsProvider()..loadSettings(),
+        ),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
-        ChangeNotifierProvider(create: (_) => MoodProvider(moodBox)),
+        ChangeNotifierProvider(create: (_) => sl<MoodProvider>()),
       ],
       child: const MoodMap(),
     ),

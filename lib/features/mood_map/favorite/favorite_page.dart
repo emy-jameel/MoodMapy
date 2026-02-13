@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mood_map/app/theme/text_styles.dart';
+import 'package:mood_map/core/theme/text_styles.dart';
 import 'package:mood_map/core/constants/colors.dart';
 import 'package:mood_map/core/constants/emojis.dart';
 import 'package:mood_map/core/constants/icons.dart';
@@ -91,14 +91,22 @@ class FavoritesPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         heroTag: 'settings-fab',
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SettingsPage()),
+          );
         },
         backgroundColor: isDark ? MoodColors.primaryDark : Colors.white,
         elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Icon(MoodIcons.settings, color: isDark ? MoodColors.primaryLight : const Color(0xFF4E5A65), size: 32),
+        child: Icon(
+          MoodIcons.settings,
+          color: isDark ? MoodColors.primaryLight : const Color(0xFF4E5A65),
+          size: 32,
+        ),
       ),
-      backgroundColor: isDark ? const Color(0xFF222C36) : const Color(0xFFF8FBFD),
+      backgroundColor:
+          isDark ? const Color(0xFF222C36) : const Color(0xFFF8FBFD),
       body: SafeArea(
         child: Column(
           children: [
@@ -108,7 +116,10 @@ class FavoritesPage extends StatelessWidget {
                 const HeaderLogo(showHeart: false),
                 const Spacer(),
                 IconButton(
-                  icon: Icon(Icons.arrow_forward_ios, color: isDark ? Colors.white70 : Colors.black54),
+                  icon: Icon(
+                    Icons.arrow_forward_ios,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -116,7 +127,10 @@ class FavoritesPage extends StatelessWidget {
             const SizedBox(height: 18),
             Text(
               AppLocalizations.of(context)!.favorites,
-              style: MoodTextStyles.bold3.copyWith(color: isDark ? Colors.white : Colors.black, fontSize: 28),
+              style: MoodTextStyles.bold3.copyWith(
+                color: isDark ? Colors.white : Colors.black,
+                fontSize: 28,
+              ),
             ),
             const SizedBox(height: 12),
             Expanded(
@@ -126,13 +140,19 @@ class FavoritesPage extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset(MoodEmoji.please, height: 77, width: 77, fit: BoxFit.contain),
+                            Image.asset(
+                              MoodEmoji.please,
+                              height: 77,
+                              width: 77,
+                              fit: BoxFit.contain,
+                            ),
                             const SizedBox(height: 16),
                             Text(
                               AppLocalizations.of(context)!.noFavorites,
                               style: TextStyle(
                                 fontSize: 19,
-                                color: isDark ? Colors.white54 : Colors.grey[600],
+                                color:
+                                    isDark ? Colors.white54 : Colors.grey[600],
                                 fontWeight: FontWeight.w500,
                               ),
                               textAlign: TextAlign.center,
@@ -147,7 +167,10 @@ class FavoritesPage extends StatelessWidget {
                           final quote = favoritesProvider.favorites[idx];
                           return FavoriteQuoteCard(
                             quote: quote,
-                            onRemove: () => favoritesProvider.removeFavorite(quote.text),
+                            onRemove:
+                                () => favoritesProvider.removeFavorite(
+                                  quote.text,
+                                ),
                             // يمكنك تعديل FavoriteQuoteCard ليدعم isDark إن أردت
                           );
                         },

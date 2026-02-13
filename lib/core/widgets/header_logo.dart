@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mood_map/core/theme/text_styles.dart';
 import 'package:mood_map/core/constants/colors.dart';
 import 'package:mood_map/core/constants/icons.dart';
-import 'package:mood_map/app/theme/text_styles.dart';
 import 'package:mood_map/core/widgets/mood_heart.dart';
 
 // class HeaderLogo extends StatelessWidget {

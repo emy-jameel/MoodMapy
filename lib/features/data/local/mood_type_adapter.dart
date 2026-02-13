@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:mood_map/core/enums/enum.dart';
+import 'package:mood_map/features/mood/domain/enums/mood_type.dart';
 
 // إذا enum اسمه MoodType
 class MoodTypeAdapter extends TypeAdapter<MoodType> {
